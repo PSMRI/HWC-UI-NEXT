@@ -714,10 +714,6 @@ export class RegistrationComponent
         }
       }
       if (c > 1 || c === 0 || cflag) {
-        this.confirmationService.alert(
-          this.currentLanguageSet.validHealthIDMessage,
-          'error',
-        );
         return false;
       }
     }
@@ -809,10 +805,6 @@ export class RegistrationComponent
     } else {
       if (healthid) {
         if (!this.disableGenerateOTP) {
-          this.confirmationService.alert(
-            this.currentLanguageSet.validHealthIDMessage,
-            'info',
-          );
           otherDetailsForm.controls['healthId'].patchValue(null);
           return false;
         } else {
@@ -1944,7 +1936,7 @@ export class RegistrationComponent
 
   healthIdSearch() {
     const dialogRef = this.dialog.open(HealthIdValidateComponent, {
-      height: '250px',
+      height: '340px',
       width: '450px',
       disableClose: true,
       data: {
@@ -1988,7 +1980,7 @@ export class RegistrationComponent
 
   generateAbhaCard() {
     this.dialog.open(GenerateAbhaComponentComponent, {
-      height: '270px',
+      height: '290px',
       width: '470px',
       disableClose: true,
     });

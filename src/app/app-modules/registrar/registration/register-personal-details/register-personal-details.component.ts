@@ -63,6 +63,8 @@ export class RegisterPersonalDetailsComponent
   genderCategory: any = 'Male';
   revisitData: any;
   revisitDataSubscription: any;
+  maritalSubscription!: Subscription;
+  MaritalStatus = false;
 
   @Input()
   personalDetailsForm!: FormGroup;
@@ -72,8 +74,6 @@ export class RegisterPersonalDetailsComponent
 
   @ViewChild(BsDatepickerDirective) datepicker!: BsDatepickerDirective;
   personalDataOnHealthIDSubscription!: Subscription;
-  maritalSubscription!: Subscription;
-  MaritalStatus = false;
 
   @HostListener('window:scroll')
   onScrollEvent() {
@@ -153,6 +153,7 @@ export class RegisterPersonalDetailsComponent
     if (this.personalDataOnHealthIDSubscription) {
       this.personalDataOnHealthIDSubscription.unsubscribe();
     }
+    this.registrarService.clearMaritalDetails();
   }
 
   setPhoneSelectionEnabledByDefault() {
@@ -434,21 +435,6 @@ export class RegisterPersonalDetailsComponent
     }
   }
 
-  isMaritalStatus() {
-    this.maritalSubscription = this.registrarService.maritalStatus$.subscribe(
-      (response) => {
-        if (response === true) {
-          this.MaritalStatus = true;
-          this.enableMaritalStatus = true;
-          this.onGenderSelected();
-        } else {
-          this.MaritalStatus = false;
-          this.enableMaritalStatus = false;
-        }
-      },
-    );
-  }
-
   /**
    *
    * Gender Selection - Transgender Confirmation
@@ -638,16 +624,30 @@ export class RegisterPersonalDetailsComponent
     }
   }
 
+  isMaritalStatus() {
+    this.maritalSubscription = this.registrarService.maritalStatus$.subscribe(
+      (response) => {
+        if (response === true) {
+          this.MaritalStatus = true;
+          this.enableMaritalStatus = true;
+          this.onGenderSelected();
+        } else {
+          this.MaritalStatus = false;
+          this.enableMaritalStatus = false;
+        }
+      },
+    );
+  }
+
   /**
    *
    * Change Age as per changed in Calendar
    */
   dobChangeByCalender(dobval: any) {
     const date = new Date(this.dateForCalendar);
-    console.log(this.personalDetailsForm.value.dob);
     if (
       this.dateForCalendar &&
-      (!dobval || dobval.length === 10) &&
+      (dobval || dobval.length === 10) &&
       this.personalDetailsForm.controls['dob'].valid
     ) {
       const dateDiff = Date.now() - date.getTime();
@@ -693,8 +693,10 @@ export class RegisterPersonalDetailsComponent
       this.personalDetailsForm.value.ageUnit === 'Years'
     ) {
       this.enableMaritalStatus = true;
+      this.MaritalStatus = true;
     } else {
       this.enableMaritalStatus = false;
+      this.MaritalStatus = false;
       this.clearMaritalStatus();
     }
   }
